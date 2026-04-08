@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나도 프로그래머 — 바이브코딩</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f7ff;
+    --surface: #dceeff;
+    --surface2: #cce4ff;
+    --border: #aad0f5;
+    --accent: #2b7de9;
+    --accent2: #6aaaf7;
+    --accent-light: #dceeff;
+    --green: #1b9e72;
+    --green-light: #c6f0de;
+    --amber: #c27a00;
+    --amber-light: #fdefc6;
+    --purple: #6b50e8;
+    --purple-light: #e4deff;
+    --pink: #d4567a;
+    --pink-light: #fde0ea;
+    --teal: #0e9fa0;
+    --teal-light: #ccf2f2;
+    --text: #18293d;
+    --muted: #4e6d8c;
+    --font: 'Noto Sans KR', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 72px 24px 60px;
+    text-align: center;
+    background: linear-gradient(160deg, #e8f5ff 0%, #f0f7ff 50%, #eaf6ff 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(33,121,196,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 80% 80%, rgba(91,143,232,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(33,121,196,0.13);
+    border: 1px solid rgba(33,121,196,0.3);
+    border-radius: 100px;
+    padding: 4px 18px;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 6vw, 58px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    color: #0e2a44;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 44px;
+  }
+
+  .yt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+
+  .yt-wrap {
+    border-radius: 16px;
+    overflow: hidden;
+    border: none;
+    background: var(--surface);
+    box-shadow: 0 4px 20px rgba(43,125,233,0.10);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none; /* 링크 밑줄 제거 */
+    transition: transform 0.2s ease;
+  }
+  
+  .yt-wrap:hover {
+    transform: translateY(-5px);
+  }
+
+  .yt-label {
+    padding: 9px 14px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: #dceeff;
+    letter-spacing: 0.04em;
+    font-family: var(--mono);
+    text-align: left;
+  }
+
+  .yt-thumb-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .yt-thumb-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* 재생 버튼 아이콘 오버레이 */
+  .play-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .play-overlay::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid var(--accent);
+    margin-left: 4px;
+  }
+
+  @media (max-width: 700px) {
+    .yt-grid { grid-template-columns: 1fr; }
+  }
+
+  .container {
+    max-width: 940px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  .section { margin-top: 64px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #b8d9ef;
+  }
+
+  .section-num {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    font-family: var(--mono);
+    box-shadow: 0 2px 8px rgba(33,121,196,0.2);
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #0e2a44;
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+
+  .steps-2col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .steps-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 680px) {
+    .steps-2col, .steps-3col { grid-template-columns: 1fr; }
+  }
+
+  .step {
+    background: var(--surface);
+    border: none;
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: transform 0.18s, box-shadow 0.18s;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .step-inner {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .step:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(43,125,233,0.13);
+  }
+
+  .sec1 .step:nth-child(1) { background: #dceeff; }
+  .sec1 .step:nth-child(2) { background: #e4deff; }
+  .sec1 .step:nth-child(3) { background: #ccf2f2; }
+  .sec1 .step:nth-child(4) { background: #c6f0de; }
+  .sec1 .step:nth-child(5) { background: #fdefc6; }
+  .sec1 .step:nth-child(6) { background: #fde0ea; }
+
+  .sec2-row1 .step:nth-child(1) { background: #dceeff; }
+  .sec2-row1 .step:nth-child(2) { background: #e4deff; }
+  .sec2-row2 .step:nth-child(1) { background: #ccf2f2; }
+  .sec2-row2 .step:nth-child(2) { background: #c6f0de; }
+
+  .sec3 .step:nth-child(1) { background: #dceeff; }
+  .sec3 .step:nth-child(2) { background: #fdefc6; }
+  .sec3 .step:nth-child(3) { background: #e4deff; }
+  .sec3 .step:nth-child(4) { background: #c6f0de; }
+
+  .sec4 .step:nth-child(1) { background: #dceeff; }
+  .sec4 .step:nth-child(2) { background: #fdefc6; }
+  .sec4 .step:nth-child(3) { background: #ccf2f2; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    border: none;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #0e2a44;
+  }
+
+  .step-content p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  .step-content .tag {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    border: 1px solid rgba(33,121,196,0.25);
+    border-radius: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 2px 8px;
+    margin-top: 6px;
+  }
+
+  .step-content .tag.green {
+    background: var(--green-light);
+    color: var(--green);
+    border-color: rgba(26,158,114,0.25);
+  }
+
+  .step-content .tag.amber {
+    background: var(--amber-light);
+    color: var(--amber);
+    border-color: rgba(201,125,0,0.25);
+  }
+
+  .shortcuts {
+    background: #dceeff;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .shortcut-row {
+    display: flex;
+    align-items: center;
+    padding: 13px 20px;
+    border-bottom: 1px solid rgba(43,125,233,0.12);
+    gap: 16px;
+  }
+
+  .shortcut-row:last-child { border-bottom: none; }
+  .shortcut-row:hover { background: rgba(43,125,233,0.10); }
+
+  .kbd {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: rgba(43,125,233,0.15);
+    border: none;
+    border-radius: 6px;
+    padding: 3px 10px;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .shortcut-desc { font-size: 14px; color: var(--muted); }
+
+  .callout {
+    background: #dceeff;
+    border: none;
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 15px 18px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  .callout strong { color: var(--accent); }
+
+  .callout.amber {
+    background: #fdefc6;
+    border-left-color: var(--amber);
+  }
+
+  .callout.amber strong { color: var(--amber); }
+
+  .callout.green {
+    background: #c6f0de;
+    border-left-color: var(--green);
+  }
+
+  .callout.green strong { color: var(--green); }
+
+  .tool-card {
+    background: #e4deff;
+    border: none;
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.18s, box-shadow 0.18s;
+    margin-bottom: 12px;
+  }
+
+  .tool-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 6px 20px rgba(107,80,232,0.15);
+  }
+
+  .tool-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(107,80,232,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .tool-info strong { display: block; font-size: 15px; font-weight: 700; color: #0e2a44; }
+  .tool-info span { font-size: 13px; color: var(--muted); }
+  .tool-arrow { margin-left: auto; color: var(--purple); font-size: 18px; flex-shrink: 0; }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+
+  .info-card {
+    border: none;
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .info-card:nth-child(1) { background: #fdefc6; }
+  .info-card:nth-child(2) { background: #fde0ea; }
+
+  .info-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-family: var(--mono);
+  }
+
+  .info-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .info-card li {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .info-card li::before { content: '—'; color: rgba(0,0,0,0.2); flex-shrink: 0; }
+
+  .badge-cluster { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+  .badge {
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 3px 10px;
+    border-radius: 100px;
+    border: 1px solid;
+    font-weight: 600;
+  }
+
+  .badge.blue { color: var(--accent); border-color: rgba(33,121,196,0.3); background: var(--accent-light); }
+  .badge.green { color: var(--green); border-color: rgba(26,158,114,0.3); background: var(--green-light); }
+  .badge.amber { color: var(--amber); border-color: rgba(201,125,0,0.3); background: var(--amber-light); }
+  .badge.purple { color: #5b4fcf; border-color: rgba(91,79,207,0.3); background: rgba(91,79,207,0.08); }
+
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+  .prompt-box {
+    background: rgba(255,255,255,0.5);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  footer {
+    border-top: 1.5px solid var(--border);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    background: linear-gradient(180deg, var(--bg) 0%, #d0e8f5 100%);
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 16px 48px; }
+    .container { padding: 0 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">바이브코딩</div>
+  <h1>나도 <span>프로그래머</span></h1>
+  <p class="hero-sub">바이브 코딩으로 웹사이트 만들기</p>
+
+  <div class="yt-grid">
+    <a href="https://www.youtube.com/watch?v=L75Sa_mukpM&t=24s" target="_blank" class="yt-wrap">
+      <div class="yt-label">▶ 강의 영상</div>
+      <div class="yt-thumb-container">
+        <img src="https://img.youtube.com/vi/L75Sa_mukpM/hqdefault.jpg" alt="강의 영상 썸네일">
+        <div class="play-overlay"></div>
+      </div>
+    </a>
+    
+    <a href="https://www.youtube.com/watch?v=4DS9nLOk8To&t=18s" target="_blank" class="yt-wrap">
+      <div class="yt-label">▶ 제미나이 3D 웹사이트 만들기</div>
+      <div class="yt-thumb-container">
+        <img src="https://img.youtube.com/vi/4DS9nLOk8To/hqdefault.jpg" alt="제미나이 3D 웹사이트 썸네일">
+        <div class="play-overlay"></div>
+      </div>
+    </a>
+    
+    <a href="https://www.youtube.com/watch?v=6hsXZb2EP8s&t=588s" target="_blank" class="yt-wrap">
+      <div class="yt-label">▶ AI로 홈페이지 만들기 라이브</div>
+      <div class="yt-thumb-container">
+        <img src="https://img.youtube.com/vi/6hsXZb2EP8s/hqdefault.jpg" alt="AI 홈페이지 만들기 썸네일">
+        <div class="play-overlay"></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>바이브 코딩을 위한 기본 설정</h2>
+    </div>
+
+    <div class="steps sec1">
+      <div class="step" style="animation-delay:0.05s">
+        <div class="step-inner">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Cursor 설치하기</strong>
+            <p>AI 코드 에디터인 Cursor를 다운로드하여 설치합니다.</p>
+            <a href="https://www.cursor.com/" target="_blank" class="tag">cursor.com →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" style="animation-delay:0.1s">
+        <div class="step-inner">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>구글 계정으로 회원가입</strong>
+            <p>Cursor 실행 후 구글 아이디로 회원가입을 진행합니다. Pro trial이 뜨면 <strong>Skip for now</strong>를 클릭하세요.</p>
+            <span class="tag amber">무료 플랜으로 시작 가능</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" style="animation-delay:0.15s">
+        <div class="step-inner">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>테마 선택 및 초기 설정</strong>
+            <p>로그인 후 원하는 테마를 선택합니다. Agent 옵션에서 <strong>continue</strong> 클릭 → 언어를 한국어로 변경합니다. (추후 변경 가능)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" style="animation-delay:0.2s">
+        <div class="step-inner">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>프로젝트 폴더 만들기</strong>
+            <p>바탕화면에 새 폴더 생성 (폴더명은 영어로). Cursor에서 <strong>Open Project</strong>를 클릭하여 생성한 폴더를 선택합니다.</p>
+            <span class="tag green">폴더명 영어로 작성!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" style="animation-delay:0.25s">
+        <div class="step-inner">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <strong>한국어 언어팩 설치</strong>
+            <p>왼쪽 위 Extension 메뉴 → <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">korea</code> 검색 → Korean Language Pack 설치 → <strong>Change Language and Restart</strong> 클릭</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" style="animation-delay:0.3s">
+        <div class="step-inner">
+          <div class="step-num">06</div>
+          <div class="step-content">
+            <strong>Live Server 설치</strong>
+            <p>왼쪽 위 Extension 메뉴 → <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">Live Server</code> 검색 → 설치</p>
+            <span class="tag">실시간 미리보기 가능해짐</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:#0e2a44;">⌨️ 간단한 단축키</h3>
+    <div class="shortcuts">
+      <div class="shortcut-row">
+        <span class="kbd">Ctrl + L</span>
+        <span class="shortcut-desc">오른쪽 채팅창 열기 → Agent 선택</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="kbd">Ctrl + K</span>
+        <span class="shortcut-desc">코드 수정 인라인 요청</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="kbd">Ctrl + Enter</span>
+        <span class="shortcut-desc">변경 사항 Accept (확인)</span>
+      </div>
+      <div class="shortcut-row">
+        <span class="kbd">F12</span>
+        <span class="shortcut-desc">개발자 도구 열기 (Chrome)</span>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:16px;">
+      <strong>Agent 설정 팁:</strong> Agent 옆 Auto를 선택하여 Auto를 해제하고, 원하는 모델(예: claude-4-sonnet)을 선택하세요.
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:16px;color:#0e2a44;">💡 더 직접적으로 수정 요청하는 방법</h3>
+    <div class="grid2">
+      <div class="info-card">
+        <h3>방법 1 — 개발자 도구 활용</h3>
+        <ul>
+          <li>F12 또는 오른쪽 점3개 → 도구 더보기 → 개발자 도구</li>
+          <li>수정할 영역에 마우스를 가져다 클릭</li>
+          <li>해당 부분의 HTML 요소가 선택됨</li>
+          <li>Ctrl + Shift + C 로 요소 복사</li>
+          <li>채팅창에 붙여넣고 수정 요청</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>방법 2 — 인라인 수정</h3>
+        <ul>
+          <li>수정할 코드 부분을 드래그 선택</li>
+          <li>Ctrl + K 단축키 입력</li>
+          <li>원하는 변경 사항을 자연어로 입력</li>
+          <li>코드를 계속해서 자연어로 수정 가능</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>첫 번째 웹사이트 만들기 (투두리스트)</h2>
+    </div>
+
+    <div class="callout amber">
+      <strong>목표:</strong> HTML, CSS, JS만을 이용하여 투두리스트 웹페이지를 만들기. 각 파일은 분리하여 작성합니다.
+    </div>
+
+    <div class="badge-cluster" style="margin-top:16px;margin-bottom:24px;">
+      <span class="badge blue">투두리스트 웹사이트</span>
+      <span class="badge green">할 일 추가/제거/수정</span>
+      <span class="badge amber">달력으로 보기</span>
+      <span class="badge purple">로컬스토리지 저장</span>
+    </div>
+
+    <div class="steps-2col sec2-row1" style="margin-bottom:14px;">
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Cursor에서 채팅창 열기</strong>
+            <p>Ctrl + L → Agent 선택 → Auto 해제 → 원하는 모델 선택 (claude-4-sonnet 추천)</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>자연어로 웹사이트 구성 요청</strong>
+            <p>아래와 같이 원하는 기능을 구체적으로 작성하여 붙여넣으세요:</p>
+            <div class="prompt-box">
+              HTML, CSS, JS만을 이용해서 내가 원하는 웹페이지를 만들고 싶어.<br><br>
+              - 투두리스트라는 제목의 웹사이트<br>
+              - 내가 할 일을 추가 제거 수정 할 수 있음<br>
+              - 달력으로도 볼 수 있음<br>
+              - 추가된 할일들은 로컬스토리지에 저장<br>
+              - 파스텔 톤의 현대적인 디자인
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps-2col sec2-row2">
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>생성된 코드 확인 및 Accept</strong>
+            <p>코드와 파일들이 만들어지면 <strong>Accept File</strong> 버튼을 클릭하거나 <span class="kbd" style="font-size:11px;padding:2px 7px;">Ctrl + Enter</span>를 눌러 확인합니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>Live Server로 미리보기</strong>
+            <p>index.html 파일에서 Live Server 실행 → 브라우저에서 실시간으로 확인</p>
+            <span class="tag green">수정사항을 자연어로 계속 요청하며 완성</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout green" style="margin-top:16px;">
+      <strong>예시 코드 참고:</strong> <a href="https://gw1.kr/호똑쌤예시코드" target="_blank" style="color:var(--green);">gw1.kr/호똑쌤예시코드</a>에서 예시 코드를 확인할 수 있습니다.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>호스팅(배포)을 위한 설정</h2>
+    </div>
+
+    <div class="steps-3col sec3">
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>GitHub 가입하기</strong>
+            <p><a href="https://github.com/" target="_blank" style="color:var(--accent);">github.com</a> → Sign up → 이메일·비밀번호·이름·지역 입력 → 시각 퍼즐 인증 → 이메일 코드 인증</p>
+            <span class="tag">가입 후 이메일로 로그인</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>새 저장소 만들기</strong>
+            <p><strong>Create repository</strong> 클릭 → 저장소 이름 입력 → <strong>Public</strong> 선택 → Create repository</p>
+            <span class="tag amber">반드시 Public 선택!</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>파일 업로드</strong>
+            <p><strong>uploading an existing file</strong> 클릭 → html, css, js 파일 선택 업로드 → <strong>Commit changes</strong> 클릭</p>
+          </div>
+        </div>
+      </div>
+      <div class="step" style="grid-column: 1 / -1; max-width: 360px;">
+        <div class="step-inner">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>GitHub Pages로 배포</strong>
+            <p>저장소 → Settings → <strong>Pages</strong> → Branch: <strong>main</strong> 선택 → Save → 배포 URL 생성!</p>
+            <span class="tag green">무료 공개 배포 완료</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">★</div>
+      <h2>심화 활동 — Gemini API로 AI 웹사이트 만들기</h2>
+    </div>
+
+    <a class="tool-card" href="https://aistudio.google.com/" target="_blank">
+      <div class="tool-logo">✦</div>
+      <div class="tool-info">
+        <strong>Google AI Studio</strong>
+        <span>Gemini API 키 발급 · aistudio.google.com</span>
+      </div>
+      <span class="tool-arrow">→</span>
+    </a>
+
+    <div class="steps-3col sec4" style="margin-top:16px;">
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Google AI Studio 접속</strong>
+            <p><a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent);">aistudio.google.com</a>에 구글 계정으로 로그인합니다.</p>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>API 키 만들기</strong>
+            <p>상단 <strong>Get API key</strong> → <strong>API 키 만들기</strong> 클릭 → 복사 버튼으로 복사</p>
+            <span class="tag amber">키는 다른 사람에게 공유 금지!</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-inner">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Cursor에서 AI 웹사이트 만들기</strong>
+            <p>복사한 API 키를 Cursor 채팅창에 붙여넣고, 만들고 싶은 AI 웹사이트를 자연어로 요청합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <a class="tool-card" href="https://suno.com/" target="_blank">
+      <div class="tool-logo">🎵</div>
+      <div class="tool-info">
+        <strong>SUNO AI — 음악 만들기</strong>
+        <span>오른쪽 위 Sign in → Create → Custom → Lyrics/Styles 입력</span>
+      </div>
+      <span class="tool-arrow">→</span>
+    </a>
+
+    <div class="callout" style="margin-top:8px;">
+      <strong>순서:</strong> 왼쪽에 Create → 위쪽에 Custom → Lyrics(가사) 입력 → Styles(스타일) 입력 → Create 클릭하면 오른쪽에 노래 2곡이 나옵니다.
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p style="margin-bottom:8px;">이 페이지가 맘에 드셨다면 <a href="https://ssam.teacherville.co.kr/ssam/mypage/myMeetApply.edu" target="_blank">좋아요</a>를 꾹 눌러주세요 👍</p>
+  <p>20260408</p>
+</footer>
+
+</body>
+</html>
